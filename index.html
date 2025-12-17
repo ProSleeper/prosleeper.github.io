@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>통합 요금 계산기</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .calculators {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+        }
+
+        @media (max-width: 1100px) {
+            .calculators {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        .container-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 10px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .result-amount {
+            font-size: 36px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .result-unit {
+            font-size: 20px;
+            color: #666;
+        }
+
+        .usage-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .usage-tier {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .tier-1 {
+            background: #4caf50;
+            color: white;
+        }
+
+        .tier-2 {
+            background: #ff9800;
+            color: white;
+        }
+
+        .tier-3 {
+            background: #f44336;
+            color: white;
+        }
+
+        .details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-section {
+            margin-bottom: 15px;
+        }
+
+        .detail-section-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+            padding-left: 10px;
+        }
+
+        .detail-row.total {
+            font-weight: 700;
+            color: #333;
+            font-size: 16px;
+            padding-left: 0;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .info-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .info-box strong {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💡 통합 요금 계산기</h1>
+        <p>전기요금과 도시가스 요금을 한 번에 계산하세요</p>
+    </div>
+
+    <div class="calculators">
+        <!-- 전기요금 계산기 -->
+        <div class="container">
+            <h2 class="container-title">
+                <span class="icon">⚡</span>
+                전기요금 계산기
+            </h2>
+            <p class="subtitle">사용 전력량을 입력하여 요금을 계산하세요</p>
+
+            <form id="electricForm">
+                <div class="form-group">
+                    <label>사용 전력량 (kWh) <span class="required">*</span></label>
+                    <input type="number" id="electricUsage" step="0.01" min="0" required>
+                    <div class="error" id="electricError">사용 전력량을 입력해주세요</div>
+                </div>
+
+                <button type="submit">계산하기</button>
+            </form>
+
+            <div class="info-box">
+                <strong>💡 요금 구간 안내</strong><br>
+                • 1구간 (200kWh 이하): 기본 910원 + 120.0원/kWh<br>
+                • 2구간 (201~400kWh): 기본 1,600원 + 214.6원/kWh<br>
+                • 3구간 (401kWh 이상): 기본 7,300원 + 307.3원/kWh
+            </div>
+
+            <div class="result" id="electricResult">
+                <div class="result-title">총 전기요금</div>
+                <div>
+                    <span class="result-amount" id="electricTotal">0</span>
+                    <span class="result-unit">원</span>
+                </div>
+
+                <div class="usage-info">
+                    사용량: <strong id="electricUsageDisplay">0</strong> kWh
+                    <span class="usage-tier" id="tierBadge">1구간</span>
+                </div>
+
+                <div class="details">
+                    <div class="detail-section">
+                        <div class="detail-section-title">📋 기본 요금</div>
+                        <div class="detail-row">
+                            <span>기본요금</span>
+                            <span id="electricBasicFee">0원</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>전력량요금</span>
+                            <span id="electricityFee">0원</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>기후환경요금 (9원/kWh)</span>
+                            <span id="climateFee">0원</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>연료비조정요금 (5원/kWh)</span>
+                            <span id="fuelFee">0원</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-section">
+                        <div class="detail-section-title">💰 세금</div>
+                        <div class="detail-row">
+                            <span>소계</span>
+                            <span id="electricSubtotal">0원</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>부가가치세 (10%)</span>
+                            <span id="electricVat">0원</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>전력산업기반기금 (3.7%)</span>
+                            <span id="electricFund">0원</span>
+                        </div>
+                    </div>
+
+                    <div class="detail-row total">
+                        <span>최종 요금</span>
+                        <span id="electricFinalTotal">0원</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 도시가스 요금 계산기 -->
+        <div class="container">
+            <h2 class="container-title">
+                <span class="icon">🔥</span>
+                도시가스 요금 계산기
+            </h2>
+            <p class="subtitle">가스 사용량을 입력하여 요금을 계산하세요</p>
+
+            <form id="gasForm">
+                <div class="form-group">
+                    <label>가스 사용량 (m³) <span class="required">*</span></label>
+                    <input type="number" id="gasUsage" step="0.01" min="0" required>
+                    <div class="error" id="gasError">가스 사용량을 입력해주세요</div>
+                </div>
+
+                <div class="form-group">
+                    <label>기본 요금 (원)</label>
+                    <input type="number" id="basicFee" step="0.01" min="0" placeholder="1250">
+                </div>
+
+                <div class="form-group">
+                    <label>열량 단가 (GCVUP)</label>
+                    <input type="number" id="gcvup" step="0.0001" min="0" placeholder="22.3617">
+                </div>
+
+                <div class="form-group">
+                    <label>평균 열량 (WACV)</label>
+                    <input type="number" id="wacv" step="0.000001" min="0" placeholder="42.422">
+                </div>
+
+                <div class="form-group">
+                    <label>취사용 기준 (MJ)</label>
+                    <input type="number" id="forCooking" step="0.01" min="0" placeholder="516">
+                </div>
+
+                <div class="form-group">
+                    <label>부가세율</label>
+                    <input type="number" id="vat" step="0.01" min="0" max="1" placeholder="0.10">
+                </div>
+
+                <button type="submit">계산하기</button>
+            </form>
+
+            <div class="result" id="gasResult">
+                <div class="result-title">총 요금</div>
+                <div>
+                    <span class="result-amount" id="gasTotal">0</span>
+                    <span class="result-unit">원</span>
+                </div>
+                <div class="details">
+                    <div class="detail-row">
+                        <span>열량값 (MJ)</span>
+                        <span id="heatValue">0</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>기본 요금</span>
+                        <span id="gasBasicFee">0원</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>고정 요금</span>
+                        <span id="fixedCharge">0원</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>변동 요금</span>
+                        <span id="variableCharge">0원</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>세전 금액</span>
+                        <span id="gasBaseBill">0원</span>
+                    </div>
+                    <div class="detail-row">
+                        <span>부가세</span>
+                        <span id="gasVat">0원</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== 전기요금 계산기 ==========
+        const ElectricRate = {
+            LEVEL_1: 120.0,
+            LEVEL_2: 214.6,
+            LEVEL_3: 307.3
+        };
+
+        const BasicElectricFee = {
+            LEVEL_1: 910,
+            LEVEL_2: 1600,
+            LEVEL_3: 7300
+        };
+
+        const AdditionalFee = {
+            CLIMATE: 9.0,
+            FUEL: 5.0
+        };
+
+        const Tax = {
+            VAT: 0.10,
+            FUND: 0.037
+        };
+
+        const UsageRange = {
+            TIER_1: 200,
+            TIER_2: 400
+        };
+
+        function calculateBasicElectricFee(usage) {
+            if (usage > UsageRange.TIER_2) return BasicElectricFee.LEVEL_3;
+            else if (usage > UsageRange.TIER_1) return BasicElectricFee.LEVEL_2;
+            else return BasicElectricFee.LEVEL_1;
+        }
+
+        function calculateElectricityFee(usage) {
+            let fee = 0;
+            if (usage <= UsageRange.TIER_1) {
+                fee = usage * ElectricRate.LEVEL_1;
+            } else if (usage <= UsageRange.TIER_2) {
+                fee = (UsageRange.TIER_1 * ElectricRate.LEVEL_1) +
+                      ((usage - UsageRange.TIER_1) * ElectricRate.LEVEL_2);
+            } else {
+                fee = (UsageRange.TIER_1 * ElectricRate.LEVEL_1) +
+                      (UsageRange.TIER_1 * ElectricRate.LEVEL_2) +
+                      ((usage - UsageRange.TIER_2) * ElectricRate.LEVEL_3);
+            }
+            return fee;
+        }
+
+        function calculateClimateFee(usage) {
+            return usage * AdditionalFee.CLIMATE;
+        }
+
+        function calculateFuelFee(usage) {
+            return usage * AdditionalFee.FUEL;
+        }
+
+        function calculateTax(baseFare) {
+            const vat = baseFare * Tax.VAT;
+            const fund = baseFare * Tax.FUND;
+            return { vat, fund, total: vat + fund };
+        }
+
+        function getTierInfo(usage) {
+            if (usage > UsageRange.TIER_2) {
+                return { tier: 3, name: '3구간', class: 'tier-3' };
+            } else if (usage > UsageRange.TIER_1) {
+                return { tier: 2, name: '2구간', class: 'tier-2' };
+            } else {
+                return { tier: 1, name: '1구간', class: 'tier-1' };
+            }
+        }
+
+        // 전기요금 폼 이벤트
+        document.getElementById('electricForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const usageInput = document.getElementById('electricUsage');
+            const usageError = document.getElementById('electricError');
+
+            if (!usageInput.value.trim() || parseFloat(usageInput.value) < 0) {
+                usageError.classList.add('show');
+                usageInput.focus();
+                return;
+            } else {
+                usageError.classList.remove('show');
+            }
+
+            const usage = parseFloat(usageInput.value);
+            const basicFee = calculateBasicElectricFee(usage);
+            const electricityFee = calculateElectricityFee(usage);
+            const climateFee = calculateClimateFee(usage);
+            const fuelFee = calculateFuelFee(usage);
+            
+            const subtotal = basicFee + electricityFee + climateFee + fuelFee;
+            const tax = calculateTax(subtotal);
+            const totalBill = subtotal + tax.total;
+            const tierInfo = getTierInfo(usage);
+
+            document.getElementById('electricTotal').textContent = formatNumber(totalBill);
+            document.getElementById('electricUsageDisplay').textContent = formatDecimal(usage);
+            
+            const tierBadge = document.getElementById('tierBadge');
+            tierBadge.textContent = tierInfo.name;
+            tierBadge.className = 'usage-tier ' + tierInfo.class;
+
+            document.getElementById('electricBasicFee').textContent = formatNumber(basicFee) + '원';
+            document.getElementById('electricityFee').textContent = formatNumber(electricityFee) + '원';
+            document.getElementById('climateFee').textContent = formatNumber(climateFee) + '원';
+            document.getElementById('fuelFee').textContent = formatNumber(fuelFee) + '원';
+            document.getElementById('electricSubtotal').textContent = formatNumber(subtotal) + '원';
+            document.getElementById('electricVat').textContent = formatNumber(tax.vat) + '원';
+            document.getElementById('electricFund').textContent = formatNumber(tax.fund) + '원';
+            document.getElementById('electricFinalTotal').textContent = formatNumber(totalBill) + '원';
+
+            document.getElementById('electricResult').classList.add('show');
+            setTimeout(() => {
+                document.getElementById('electricResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        });
+
+        document.getElementById('electricUsage').addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                document.getElementById('electricError').classList.remove('show');
+            }
+        });
+
+        // ========== 도시가스 요금 계산기 ==========
+        const gasDefaults = {
+            basicFee: 1250.0,
+            gcvup: 22.3617,
+            wacv: 42.422,
+            forCooking: 516.0,
+            vat: 0.10
+        };
+
+        function getInputValue(id, defaultValue) {
+            const input = document.getElementById(id);
+            const value = input.value.trim();
+            return value === '' ? defaultValue : parseFloat(value);
+        }
+
+        function formatNumber(num) {
+            return Math.round(num).toLocaleString('ko-KR');
+        }
+
+        function formatDecimal(num, decimals = 2) {
+            return num.toFixed(decimals).toLocaleString('ko-KR');
+        }
+
+        // 도시가스 폼 이벤트
+        document.getElementById('gasForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const usageInput = document.getElementById('gasUsage');
+            const usageError = document.getElementById('gasError');
+
+            if (!usageInput.value.trim() || parseFloat(usageInput.value) < 0) {
+                usageError.classList.add('show');
+                usageInput.focus();
+                return;
+            } else {
+                usageError.classList.remove('show');
+            }
+
+            const usage = parseFloat(usageInput.value);
+            const basicFee = getInputValue('basicFee', gasDefaults.basicFee);
+            const gcvup = getInputValue('gcvup', gasDefaults.gcvup);
+            const wacv = getInputValue('wacv', gasDefaults.wacv);
+            const forCookingUsage = getInputValue('forCooking', gasDefaults.forCooking);
+            const vat = getInputValue('vat', gasDefaults.vat);
+
+            const heatValue = usage * wacv;
+            const variableCharge = (heatValue - forCookingUsage) * gcvup;
+            const fixedCharge = forCookingUsage * gcvup;
+            const baseBill = basicFee + variableCharge + fixedCharge;
+            const vatAmount = baseBill * vat;
+            const totalBill = baseBill + vatAmount;
+
+            document.getElementById('gasTotal').textContent = formatNumber(totalBill);
+            document.getElementById('heatValue').textContent = formatDecimal(heatValue);
+            document.getElementById('gasBasicFee').textContent = formatNumber(basicFee) + '원';
+            document.getElementById('fixedCharge').textContent = formatNumber(fixedCharge) + '원';
+            document.getElementById('variableCharge').textContent = formatNumber(variableCharge) + '원';
+            document.getElementById('gasBaseBill').textContent = formatNumber(baseBill) + '원';
+            document.getElementById('gasVat').textContent = formatNumber(vatAmount) + '원';
+
+            document.getElementById('gasResult').classList.add('show');
+            setTimeout(() => {
+                document.getElementById('gasResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        });
+
+        document.getElementById('gasUsage').addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                document.getElementById('gasError').classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
