@@ -364,7 +364,7 @@
             </h2>
             <p class="subtitle">가스 사용량을 입력하여 요금을 계산하세요</p>
 
-            <br id="gasForm">
+            <form id="gasForm">
                 <div class="form-group">
                     <label>가스 사용량 (m³) <span class="required">*</span></label>
                     <input type="number" id="gasUsage" step="0.01" min="0" required>
@@ -379,7 +379,6 @@
                     <label>기본 요금 (원)</label>
                     <input type="number" id="basicFee" step="0.01" min="0" placeholder="1250">
                 </div>
-                
 
                 <div class="form-group">
                     <label>열량 단가 (GCVUP)</label>
@@ -401,7 +400,7 @@
                     <input type="number" id="vat" step="0.01" min="0" max="1" placeholder="0.10">
                 </div>
 
-                
+
             </form>
 
             <div class="result" id="gasResult">
