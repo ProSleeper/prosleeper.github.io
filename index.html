@@ -292,12 +292,7 @@
                 <button type="submit">계산하기</button>
             </form>
 
-            <div class="info-box">
-                <strong>💡 요금 구간 안내</strong><br>
-                • 1구간 (200kWh 이하): 기본 910원 + 120.0원/kWh<br>
-                • 2구간 (201~400kWh): 기본 1,600원 + 214.6원/kWh<br>
-                • 3구간 (401kWh 이상): 기본 7,300원 + 307.3원/kWh
-            </div>
+            
 
             <div class="result" id="electricResult">
                 <div class="result-title">총 전기요금</div>
@@ -354,6 +349,12 @@
                     </div>
                 </div>
             </div>
+            <div class="info-box">
+                <strong>💡 요금 구간 안내</strong><br>
+                • 1구간 (200kWh 이하): 기본 910원 + 120.0원/kWh<br>
+                • 2구간 (201~400kWh): 기본 1,600원 + 214.6원/kWh<br>
+                • 3구간 (401kWh 이상): 기본 7,300원 + 307.3원/kWh
+            </div>
         </div>
 
         <!-- 도시가스 요금 계산기 -->
@@ -372,70 +373,66 @@
                 </div>
 
                 <button type="submit">계산하기</button>
-                <br><br>
-                <br><br>
 
-                <div class="form-group">
-                    <label>기본 요금 (원)</label>
-                    <input type="number" id="basicFee" step="0.01" min="0" placeholder="1250">
-                </div>
-
-                <div class="form-group">
-                    <label>열량 단가 (GCVUP)</label>
-                    <input type="number" id="gcvup" step="0.0001" min="0" placeholder="22.3617">
-                </div>
-
-                <div class="form-group">
-                    <label>평균 열량 (WACV)</label>
-                    <input type="number" id="wacv" step="0.000001" min="0" placeholder="42.422">
-                </div>
-
-                <div class="form-group">
-                    <label>취사용 기준 (MJ)</label>
-                    <input type="number" id="forCooking" step="0.01" min="0" placeholder="516">
-                </div>
-
-                <div class="form-group">
-                    <label>부가세율</label>
-                    <input type="number" id="vat" step="0.01" min="0" max="1" placeholder="0.10">
-                </div>
-
-
-            </form>
-
-            <div class="result" id="gasResult">
-                <div class="result-title">총 요금</div>
-                <div>
-                    <span class="result-amount" id="gasTotal">0</span>
-                    <span class="result-unit">원</span>
-                </div>
-                <div class="details">
-                    <div class="detail-row">
-                        <span>열량값 (MJ)</span>
-                        <span id="heatValue">0</span>
+                <div class="result" id="gasResult">
+                    <div class="result-title">총 요금</div>
+                    <div>
+                        <span class="result-amount" id="gasTotal">0</span>
+                        <span class="result-unit">원</span>
                     </div>
-                    <div class="detail-row">
-                        <span>기본 요금</span>
-                        <span id="gasBasicFee">0원</span>
+                    <div class="details">
+                        <div class="detail-row">
+                            <span>열량값 (MJ)</span>
+                            <span id="heatValue">0</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>기본 요금</span>
+                            <span id="gasBasicFee">0원</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>고정 요금</span>
+                            <span id="fixedCharge">0원</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>변동 요금</span>
+                            <span id="variableCharge">0원</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>세전 금액</span>
+                            <span id="gasBaseBill">0원</span>
+                        </div>
+                        <div class="detail-row">
+                            <span>부가세</span>
+                            <span id="gasVat">0원</span>
+                        </div>
                     </div>
-                    <div class="detail-row">
-                        <span>고정 요금</span>
-                        <span id="fixedCharge">0원</span>
                     </div>
-                    <div class="detail-row">
-                        <span>변동 요금</span>
-                        <span id="variableCharge">0원</span>
+                    <br><br>
+                    <br><br>
+                    
+                    <div class="form-group">
+                        <label>기본 요금 (원)</label>
+                        <input type="number" id="basicFee" step="0.01" min="0" placeholder="1250">
                     </div>
-                    <div class="detail-row">
-                        <span>세전 금액</span>
-                        <span id="gasBaseBill">0원</span>
+                    
+                    <div class="form-group">
+                        <label>열량 단가 (GCVUP)</label>
+                        <input type="number" id="gcvup" step="0.0001" min="0" placeholder="22.3617">
                     </div>
-                    <div class="detail-row">
-                        <span>부가세</span>
-                        <span id="gasVat">0원</span>
+                    
+                    <div class="form-group">
+                        <label>평균 열량 (WACV)</label>
+                        <input type="number" id="wacv" step="0.000001" min="0" placeholder="42.422">
                     </div>
-                </div>
-            </div>
+                    <div class="form-group">
+                        <label>취사용 기준 (MJ)</label>
+                        <input type="number" id="forCooking" step="0.01" min="0" placeholder="516">
+                    </div>
+                    <div class="form-group">
+                        <label>부가세율</label>
+                        <input type="number" id="vat" step="0.01" min="0" max="1" placeholder="0.10">
+                    </div>
+                    </form>
         </div>
     </div>
 
